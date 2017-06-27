@@ -18,13 +18,26 @@ function Elevator() {
 }
 
 // Assign a new floor for the elevator to go to
-Elevator.prototype.assign = function(floor) {
+Elevator.prototype.assign = function(trip) {
     // Ensure the elevator is able to take assignments
     if (this.trips >= 100) return false;
 
     // Add the assignment to the queue
-    this.queue.push(floor);
-    this.trips.push(floor);
+    this.queue.concat(trip);
+
+    // If the assignment starts at the current floor
+    // don't add the starting point to the total trips
+    if (trip[0] === this.floor) {
+        this.trips.push(trip[1]);
+    } else {
+        this.trips.concat(trip);
+    }
+
+    this.go();
+};
+
+Elevator.prototype.go = function() {
+    const trip = this.queue.shift();
 };
 
 // When a floor is passed

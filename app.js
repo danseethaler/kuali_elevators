@@ -21,7 +21,8 @@ console.log(`Controller initialized with ${elevatorCount} elevators.`);
 process.stdin.resume();
 process.stdin.setEncoding('utf8');
 
-process.stdin.on('data', function(floor) {
-    floor = parseInt(floor);
-    contrlOb.request(floor);
+process.stdin.on('data', function(floorStartStop) {
+    const startStop = floorStartStop.split(' ');
+    if (startStop.length != 2) return console.log('Invalid input.');
+    contrlOb.request(startStop[0], startStop[1]);
 });
