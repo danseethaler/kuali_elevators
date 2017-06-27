@@ -24,16 +24,42 @@ Controller.prototype.request = function(start, stop) {
     // exception is that if an unoccupied elevator is already stopped at that floor, then it will
     // always have the highest priority answering that call.
 
-    // Look for the unoccupied elevator on the same floor
+    var foundElevator;
 
-    // Look for the closest unoccupied elevator
+    var unoccupiedElevators = this.elevators.filter(elevator => {
+        if (!elevator.available()) return false;
+        if (elevator.inTransit) return false;
+    });
+
+    if (unoccupiedElevators.length) {
+        // Look for the unoccupied elevator on the same floor
+        foundElevator = unoccupiedElevators.find(elevator => {
+            if (elevator.currentFloor !== start) return false;
+            return true;
+        });
+
+        // Look for the closest unoccupied elevator
+        if (!foundElevator) {
+            foundElevator = unoccupiedElevators
+                .sort((a, b) => {
+                    var aDiff = Math.abs(a.currentFloor - start);
+                    var bDiff = Math.abs(b.currentFloor - start);
+
+                    return aDiff - bDiff;
+                    // Pull off the first element in the response
+                })
+                .shift();
+        }
+    }
 
     // Check to see if an occupied elevator is passing
-
-    const elevator = this.elevators[1];
+    if (!foundElevator) {
+        // TODO: Look for an occupied elevator that is passing
+        const elevator = this.elevators[1];
+    }
 
     // Make the assignment
-    elevator.assign([start, stop]);
+    foundElevator.assign([start, stop]);
 };
 
 module.exports = Controller;

@@ -75,13 +75,22 @@ Elevator.prototype.reachedFloor = function(floor) {
     // Keep track of the floor we're on
     this.currentFloor = floor;
 
-    if (floor === this.currentFloor) {
-    }
-
     // 3. Each elevator will report when it opens or closes its doors.
-    this.openCloseDoors++;
+    if (floor === this.currentFloor) {
+        setTimeout(() => {
+            this.openCloseDoors++;
+            // Proceed to next floor/assignment
+            this.go();
+        });
+    } else {
+        // Proceed to next floor/assignment
+        this.go();
+    }
 };
 
+// The elevator should keep track of how many trips it has made, and how many floors it
+// has passed. The elevator should go into maintenance mode after 100 trips, and stop
+// functioning until serviced, therefore not be available for elevator calls.
 Elevator.prototype.available = function() {
     return this.trips < 100;
 };
