@@ -12,6 +12,7 @@ function Elevator() {
     // A list of all trips (assignments) this elevator has received
     this.trips = [];
     this.floorsPassed = 0;
+    this.openCloseDoors = 0;
 
     // Wether the elevator is currently moving
     this.inTransit = false;
@@ -37,14 +38,30 @@ Elevator.prototype.assign = function(trip) {
 };
 
 Elevator.prototype.go = function() {
-    const trip = this.queue.shift();
+    if (this.inTransit) return false;
+    const destination = this.queue.shift();
+
+    if (destination === this.floor) return this.reachedFloor();
+
+    setTimeout(function() {}, 10000);
 };
 
 // When a floor is passed
-Elevator.prototype.passedFloor = function(floor) {};
+// 2. Each elevator will report as is moves from floor to floor.
+Elevator.prototype.passedFloor = function(direction) {
+    if (direction === 'up') {
+        this.floor++;
+    } else {
+        this.floor--;
+    }
+    this.floorsPassed++;
+};
 
 // When a floor is reached
-Elevator.prototype.reachedFloor = function(floor) {};
+Elevator.prototype.reachedFloor = function(floor) {
+    // 3. Each elevator will report when it opens or closes its doors.
+    this.openCloseDoors++;
+};
 
 Elevator.prototype.available = function() {
     return this.trips < 100;

@@ -8,6 +8,7 @@ function Controller(elevators, floorCount) {
 
 Controller.prototype.request = function(start, stop) {
     // Validate the ranges of the request
+    // 4. An elevator cannot proceed above the top floor.
     if (start < 1 || start > this.floorCount) {
         return void console.log('Start floor is out of range.');
     }
@@ -16,7 +17,17 @@ Controller.prototype.request = function(start, stop) {
     }
 
     // Find the best elevator to make the stop
-    // TODO: Impliment logic for finding the elevator
+    // When an elevator request is made, the unoccupied elevator closest to it will answer the
+    // call, unless an occupied elevator is moving and will pass that floor on its way. The
+    // exception is that if an unoccupied elevator is already stopped at that floor, then it will
+    // always have the highest priority answering that call.
+
+    // Look for the unoccupied elevator on the same floor
+
+    // Look for the closest unoccupied elevator
+
+    // Check to see if an occupied elevator is passing
+
     const elevator = this.elevators[1];
 
     // Make the assignment
