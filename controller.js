@@ -18,17 +18,36 @@ Controller.prototype.request = function(start, stop) {
         return void console.log('Stop floor is out of range.');
     }
 
+    var assignmentElevator = this.findElevator(start);
+
+    if (!assignmentElevator) return false;
+
+    // Make the assignment
+    assignmentElevator.assign([start, stop]);
+};
+
+Controller.prototype.findElevator = function(start) {
     // Find the best elevator to make the stop
     // When an elevator request is made, the unoccupied elevator closest to it will answer the
     // call, unless an occupied elevator is moving and will pass that floor on its way. The
     // exception is that if an unoccupied elevator is already stopped at that floor, then it will
     // always have the highest priority answering that call.
 
+    // Make sure we have elevators that are available
+    var availableElevators = this.elevators.filter(elevator =>
+        elevator.available()
+    );
+
+    if (!availableElevators.length) {
+        return void console.log('There are no available elevators :(');
+    }
+
     var foundElevator;
 
-    var unoccupiedElevators = this.elevators.filter(elevator => {
+    var unoccupiedElevators = availableElevators.filter(elevator => {
         if (!elevator.available()) return false;
         if (elevator.inTransit) return false;
+        return true;
     });
 
     if (unoccupiedElevators.length) {
@@ -54,12 +73,19 @@ Controller.prototype.request = function(start, stop) {
 
     // Check to see if an occupied elevator is passing
     if (!foundElevator) {
-        // TODO: Look for an occupied elevator that is passing
-        const elevator = this.elevators[1];
+        var occupiedElevators = availableElevators.filter(elevator => {
+            if (!elevator.available()) return false;
+            if (!elevator.inTransit) return false;
+            return true;
+        });
+
+        foundElevator = occupiedElevators.find(elevator => {
+            const floors = elevator.floorPath();
+            if (floors.indexOf(start) >= 0) return true;
+        });
     }
 
-    // Make the assignment
-    foundElevator.assign([start, stop]);
+    return foundElevator;
 };
 
 module.exports = Controller;

@@ -88,6 +88,28 @@ Elevator.prototype.reachedFloor = function(floor) {
     }
 };
 
+// Return the floors in the path of the elevator
+Elevator.prototype.floorPath = function() {
+    if (!this.inTransit) return [];
+
+    var highEnd = this.queue[0];
+    // +1 to to skip the current floor since it's already been passed
+    var lowEnd = this.currentFloor + 1;
+
+    if (this.currentFloor > this.queue[0]) {
+        // +1 to to skip the current floor since it's already been passed
+        highEnd = this.currentFloor - 1;
+        lowEnd = this.queue[0];
+    }
+
+    var floorsInPath = [];
+    for (var i = lowEnd; i <= highEnd; i++) {
+        floorsInPath.push(i);
+    }
+
+    return floorsInPath;
+};
+
 // The elevator should keep track of how many trips it has made, and how many floors it
 // has passed. The elevator should go into maintenance mode after 100 trips, and stop
 // functioning until serviced, therefore not be available for elevator calls.
