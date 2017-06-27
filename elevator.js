@@ -2,9 +2,11 @@
 // Elevators will manage their own state
 // what floor they're on, next stop/stops, direction of travel
 
-function Elevator() {
+function Elevator(id) {
     // Initial position
     this.currentFloor = 1;
+
+    this.id = id;
 
     // Outstanding floor assignments in order
     this.queue = [];
@@ -23,15 +25,17 @@ Elevator.prototype.assign = function(trip) {
     // Ensure the elevator is able to take assignments
     if (this.trips >= 100) return false;
 
+    console.log(`Elevator ${this.id} received an assignment ${trip}.`);
+
     // Add the assignment to the queue
-    this.queue.concat(trip);
+    this.queue = this.queue.concat(trip);
 
     // If the assignment starts at the current floor
     // don't add the starting point to the total trips
     if (trip[0] === this.currentFloor) {
         this.trips.push(trip[1]);
     } else {
-        this.trips.concat(trip);
+        this.trips = this.trips.concat(trip);
     }
 
     this.go();
@@ -52,16 +56,16 @@ Elevator.prototype.go = function() {
     // destination we're able to add a stop during transit
     var nextFloor;
     if (destination > this.currentFloor) {
-        nextFloor = this.currentFloor - 1;
-    } else {
         nextFloor = this.currentFloor + 1;
+    } else {
+        nextFloor = this.currentFloor - 1;
     }
 
     // This elevator is now in transit
     this.inTransit = true;
     setTimeout(() => {
         this.reachedFloor(nextFloor);
-    }, 10000);
+    }, 1000);
 };
 
 // When a floor is reached
@@ -74,10 +78,12 @@ Elevator.prototype.reachedFloor = function(floor) {
 
     // Keep track of the floor we're on
     this.currentFloor = floor;
+    console.log(`Elevator ${this.id} reached floor ${floor}`);
 
     // 3. Each elevator will report when it opens or closes its doors.
     if (floor === this.currentFloor) {
         setTimeout(() => {
+            console.log(`Elevator ${this.id} opened and closed it's doors.`);
             this.openCloseDoors++;
             // Proceed to next floor/assignment
             this.go();

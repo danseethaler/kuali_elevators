@@ -12,7 +12,7 @@ const floorCount = process.env.FLOOR_COUNT || 1;
 const elevators = [];
 
 for (var i = 0; i < elevatorCount; i++) {
-    elevators.push(new Elevator());
+    elevators.push(new Elevator(i));
 }
 
 const contrlOb = new Controller(elevators, floorCount);
@@ -27,5 +27,5 @@ process.stdin.setEncoding('utf8');
 process.stdin.on('data', function(floorStartStop) {
     const startStop = floorStartStop.split(' ');
     if (startStop.length != 2) return console.log('Invalid input.');
-    contrlOb.request(startStop[0], startStop[1]);
+    contrlOb.request(parseInt(startStop[0]), parseInt(startStop[1]));
 });
