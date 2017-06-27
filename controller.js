@@ -9,9 +9,11 @@ function Controller(elevators, floorCount) {
 Controller.prototype.request = function(start, stop) {
     // Validate the ranges of the request
     // 4. An elevator cannot proceed above the top floor.
+    // 5. An elevator cannot proceed below the ground floor (assume 1 as the min)
     if (start < 1 || start > this.floorCount) {
         return void console.log('Start floor is out of range.');
     }
+
     if (stop < 1 || stop > this.floorCount) {
         return void console.log('Stop floor is out of range.');
     }

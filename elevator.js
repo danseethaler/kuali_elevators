@@ -4,7 +4,7 @@
 
 function Elevator() {
     // Initial position
-    this.floor = 1;
+    this.currentFloor = 1;
 
     // Outstanding floor assignments in order
     this.queue = [];
@@ -28,37 +28,56 @@ Elevator.prototype.assign = function(trip) {
 
     // If the assignment starts at the current floor
     // don't add the starting point to the total trips
-    if (trip[0] === this.floor) {
+    if (trip[0] === this.currentFloor) {
         this.trips.push(trip[1]);
     } else {
         this.trips.concat(trip);
     }
 
     this.go();
+
+    // Successful assignment
+    return true;
 };
 
 Elevator.prototype.go = function() {
     if (this.inTransit) return false;
-    const destination = this.queue.shift();
+    if (!this.queue.length) return false;
+    const destination = this.queue[0];
 
-    if (destination === this.floor) return this.reachedFloor();
+    if (destination === this.currentFloor) return this.reachedFloor();
 
-    setTimeout(function() {}, 10000);
-};
-
-// When a floor is passed
-// 2. Each elevator will report as is moves from floor to floor.
-Elevator.prototype.passedFloor = function(direction) {
-    if (direction === 'up') {
-        this.floor++;
+    // Find the next floor
+    // By tracking the next floor in the sequence rather than the next
+    // destination we're able to add a stop during transit
+    var nextFloor;
+    if (destination > this.currentFloor) {
+        nextFloor = this.currentFloor - 1;
     } else {
-        this.floor--;
+        nextFloor = this.currentFloor + 1;
     }
-    this.floorsPassed++;
+
+    // This elevator is now in transit
+    this.inTransit = true;
+    setTimeout(() => {
+        this.reachedFloor(nextFloor);
+    }, 10000);
 };
 
 // When a floor is reached
 Elevator.prototype.reachedFloor = function(floor) {
+    // 2. Each elevator will report as is moves from floor to floor.
+    this.floorsPassed++;
+
+    // Not in transit when floor is reached
+    this.inTransit = false;
+
+    // Keep track of the floor we're on
+    this.currentFloor = floor;
+
+    if (floor === this.currentFloor) {
+    }
+
     // 3. Each elevator will report when it opens or closes its doors.
     this.openCloseDoors++;
 };
